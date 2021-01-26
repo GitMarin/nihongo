@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.nihongo.mapper.BunpouMapper">
+    <resultMap type="com.ruoyi.nihongo.domain.vo.BunpouVo" id="BunpouVoResult">
+        <id     property="bunpouId"      column="bunpou_id"      />
+        <result property="content"       column="content"    />
+        <collection property="bunpouUses"  javaType="java.util.ArrayList" ofType="com.ruoyi.nihongo.domain.vo.BunpouUseVo" column="bunpou_id" select="selectBunpouUseVo"/>
+    </resultMap>
+
+    <resultMap type="com.ruoyi.nihongo.domain.vo.BunpouUseVo" id="BunpouUseVoResult">
+        <id     property="bunpouUseId"   column="bunpou_use_id"     />
+        <result property="use"           column="use"   />
+        <result property="type"          column="type"   />
+        <result property="attention"     column="attention"   />
+        <result property="level"         column="level"   />
+        <result property="explanation"   column="explanation"   />
+        <result property="typeLabels"   column="typeLabels"   />
+        <collection property="bunpouUseExamples"  javaType="java.util.ArrayList" ofType="com.ruoyi.nihongo.domain.BunpouUseExample">
+            <id     property="bunpouUseExampleId"   column="bunpou_use_example_id"     />
+            <result property="example"              column="example"   />
+            <result property="translation"          column="translation"   />
+        </collection>
+    </resultMap>
+
+    <select id="selectBunpouVo" resultMap="BunpouVoResult">
+        SELECT b.id AS bunpou_id,b.content
+        FROM local_bunpou b
+    </select>
+
+    <select id="selectBunpouUseVo" resultMap="BunpouUseVoResult">
+        SELECT bu.id AS bunpou_use_id,bu.`use`,bu.type,bu.attention,bu.`level`,bu.explanation,bue.id AS bunpou_use_example_id,bue.example,bue.translation,GROUP_CONCAT(t.label) AS typeLabels
+        FROM local_bunpou_use bu
+        LEFT JOIN local_bunpou_use_example bue on bu.id = bue.bunpou_use_id
+        LEFT JOIN local_bunpou_type t on FIND_IN_SET(t.id,bu.type)
+        WHERE bu.bunpou_id = #{id}
+    </select>
+
+    <update id="updateExample" parameterType="com.ruoyi.nihongo.domain.vo.ExampleVo">
+ 		update local_bunpou_use_example set example = #{example} , `translation` = #{translation} where id = #{bunpouUseExampleId}
+	</update>
+
+    <insert id="insertExample" parameterType="com.ruoyi.nihongo.domain.vo.ExampleVo">
+        insert into local_bunpou_use_example (example,`translation`,bunpou_use_id) values (#{example},#{translation},#{bunpouUseId})
+    </insert>
+
+    <update id="updateUse" parameterType="com.ruoyi.nihongo.domain.vo.UseVo">
+ 		update local_bunpou_use
+ 		set `use` = #{use} ,
+ 		`type` = #{type},
+ 		attention = #{attention} ,
+ 		`level` = #{level} ,
+ 		explanation = #{explanation}
+ 		where id = #{bunpouUseId}
+	</update>
+
+    <insert id="insertUse" parameterType="com.ruoyi.nihongo.domain.vo.UseVo">
+        insert into local_bunpou_use
+        (`use`,`type`,attention,`level`,explanation,bunpou_id)
+        values
+        (#{use},#{type},#{attention},#{level},#{explanation},#{bunpouId})
+    </insert>
+
+    <update id="updateBunpou" parameterType="com.ruoyi.nihongo.domain.Bunpou">
+ 		update local_bunpou
+ 		set content = #{content}
+ 		where id = #{bunpouId}
+	</update>
+
+    <insert id="insertBunpou" parameterType="com.ruoyi.nihongo.domain.Bunpou">
+        insert into local_bunpou (content) values (#{content})
+    </insert>
+
+</mapper>

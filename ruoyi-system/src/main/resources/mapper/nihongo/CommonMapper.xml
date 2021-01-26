@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.nihongo.mapper.CommonMapper">
+    <resultMap type="com.ruoyi.nihongo.domain.BunpouType" id="TypesResult">
+        <id     property="id"      column="id"      />
+        <result property="label"       column="label"    />
+    </resultMap>
+    <select id="selectTypeList" resultMap="TypesResult">
+        select * from local_bunpou_type
+    </select>
+
+</mapper>

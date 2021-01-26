@@ -1,9 +1,12 @@
 package com.ruoyi.framework.web.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,6 +51,9 @@ public class TokenService
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private ISysUserService userService;
 
     /**
      * 获取用户身份信息
@@ -154,6 +160,9 @@ public class TokenService
         loginUser.setLoginLocation(AddressUtils.getRealAddressByIP(ip));
         loginUser.setBrowser(userAgent.getBrowser().getName());
         loginUser.setOs(userAgent.getOperatingSystem().getName());
+        loginUser.getUser().setLoginIp(ip);
+        loginUser.getUser().setLoginDate(new Date());
+        userService.updateUserIp(loginUser.getUser());
     }
 
     /**
